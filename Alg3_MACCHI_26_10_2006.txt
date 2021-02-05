@@ -1,0 +1,123 @@
+Problema 1:
+	fun merge ([],a ) = a
+	| merge (a, []) = a
+	| merge (x::xs, y::ys)=
+		if x>y then y::merge(x::xs, ys)
+		else x::merge(xs, y::ys);
+
+a) Que tipo tiene esta funcion?
+	Mezclando la linea 1 y 2 obtengo que el 1er elemento debe de ser una lista, 
+igual el 2do
+	____list * ____list --> ____list
+	Veo ademas que x e y son comparados => seran enteros  con lo cual el tipo 
+es
+	int list * int list --> int list
+
+b) Que parece hacer ?
+	Ordena, parcialmente, entre dos listas
+
+c) Que nombre con sentido puede tener esta funcion ?
+	merge: Mezclar en ingles
+
+d) Cuando el resultado estara ordenado de menor a mayor ?
+	Cuando las dos listas esten ordenadas de menor a mayor.
+
+
+Problema 2:
+Usar merge para hacer un merge sort (tipo int list-> int list) que tome un a 
+lista arbitraria y devuelva la lista ordenada.
+Deberemos dividir la lista argumento en dos o mas listas (ya que el merge 
+recive 2 listas) ordenadas, de ser posible. Como se podrá hacer esto ?
+Ej: [i1, i2, i3]  tenemos una lista de 3 elementos y no sabemos cual es 
+mayor que cual y queremos dividirla en listas ordenadas, como hacemos ?
+[i1, i2, i3]-> [[i1],[i2],[i3]] Esto lo podemos hacer con...
+	fun unflat L = map(fn x=>[x]) L;
+	//el map toma la funcion y se la aplica a L
+	//en este caso, a cada elemento de x lo transforma en una lista [x]
+
+Como componemos todo en una sola lista ? Bueno, podemos tomar un par y 
+hacerle un merge a las dos, al resultado, volver a aplicarle el merge. 
+Nosotros conocemos una funcion que hace ese plegado... foldr: fold (plegado) 
+y r por right.
+
+	fun mergesort L =
+		foldr merge [] (unflat L);
+
+					______________________________-
+
+Alguien sabe que es esto ?
+	select * from p
+
+Es SQL. lenguaje usado en consultas(queries) con bases de datos relacionales 
+(creadas por Ch.Codd en 1971).
+Codd demostro que con cinco operaciones se pueden expresar TODAS las 
+consultas posibles (expresables como un conjunto definido por comprension 
+[Zermelo-Fraenkel]. De las cinco usaremos TRES. (ya que las otras dos suelen 
+estar solo para que sea totalmente completo, y gralmente no se usan)
+	- Proyeccion
+	- Seleccion
+	- Producto Cartesiano
+
+Empecemos por el producto cartesiano.
+Dados dos conjuntos C1 y C2, C1xC2 = {(x,y)/ x pertenece C1 & y pertenece 
+C2}
+Como conjuntos y pares usaremos LISTAS.
+
+Problema: Hacer una funcion cart cuyo tipo sea
+	'a list * 'a list -> 'a list list
+Ej: cart([1,2], [10,20]] -> [[1,10],[1,20],[2,10],[2,20]]
+
+	fun cart ([],a ) = a
+	|	((x::xs) L) =
+		h::(unflat L);
+
+
+Solucion Guido:
+fun f1 [] _ = []
+| f1 (h::s) l2 = (map (fn x => [h, x]) l2)::(f1 s l2)
+
+fun f2 l1 l2 = List.concat (f1 l1 l2)
+
+(*	Nota:
+	Definicio'n de map y foldr.
+
+	fun map _ [] = []
+	| map f (h::t) = f(h)::map f t
+
+	fun foldr _ i [] = i
+	| foldr f i (h::t) = f(h, foldr f i t)
+
+	Map se puede hacer con foldr!
+*)
+fun mimap f l = foldr (fn(x, y) => f(x)::y) [] l
+
+NEW SOLUTION
+
+fun f1 [] _ = []
+| f1 (h::s) l2 = (map (fn x => [h, x]) l2)::(f1 s l2)
+
+fun f2 l1 l2 = List.concat (f1 l1 l2)
+
+(*
+	Nota:
+	Definicio'n de map y foldr.
+
+	fun map _ [] = []
+	| map f (h::t) = f(h)::map f t
+
+	fun foldr _ i [] = i
+	| foldr f i (h::t) = f(h, foldr f i t)
+
+	Map se puede hacer con foldr!
+*)
+fun mimap f l = foldr (fn(x, y) => f(x)::y) [] l
+
+fun cart(l1, l2) = List.concat(map (fn h => (map (fn x => [h, x])) l2) l1)
+
+(*
+	select l1, l2 from L1, L2
+	where 10*l1=l2
+*)
+
+
+
